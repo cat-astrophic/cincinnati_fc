@@ -159,7 +159,7 @@ mercy_distance = []
 
 for c in coords:
     
-    print('Calculating distances for address ' + str(1+coords.index(c)) + ' of 174813.......') # Visualize progess
+    print('Calculating distances for address ' + str(1+coords.index(c)) + ' of 174813.......') # Visualize progess    
     nippert_distance.append(geodesic(c,nippert_coords).km) # Distance in km
     mercy_distance.append(geodesic(c,mercy_coords).km) # Distance in km
 
@@ -174,10 +174,44 @@ df = pd.concat([df, nippert_distance, mercy_distance, coordsx], axis = 1)
 # Calculating the age of the house at the time of the transaction (in years)
 
 ages = [int(df['Transfer Date'][i][-4:]) - df['Year Built'][i] for i in range(len(df))]
+negative_age_flag = [1 if a < 0 else 0 for a in ages]
+ages2 = [a if a >= 0 else 0 for a in ages] # Some ages are negative for sales finalized before construction was completed
+
+ages = pd.Series(ages, name = 'Actual Age')
+ages2 = pd.Series(ages2, name = 'Zero Coded Age')
+negative_age_flag = pd.Series(negative_age_flag, name = 'Negative Age Flag')
 
 # Adding ages to the main dataframe
 
-df = pd.concat([df, pd.Series(ages, name = 'Age')], axis = 1)
+df = pd.concat([df, ages, ages2, negative_age_flag], axis = 1)
+
+# Dropping observations that have any of: FinSqFt == 0; Rooms == 0; Full Baths == 0;
+
+df = df[df.Rooms > 0].reset_index(drop = True)
+df = df[df['Full Baths'] > 0].reset_index(drop = True)
+df = df[df.FinSqFt > 0].reset_index(drop = True)
+
+# Dropping observations for which Nominatim was not accurate / could not find coordinates - Nippert is central in Cincinnati so this location is chosen with a 50km radius
+
+df = df[df.Nippert < 50].reset_index(drop = True)
+
+# Converting Amount from string to numeric
+
+amt = []
+
+for a in df.Amount:
+    
+    try:
+        
+        amt.append(int(a.strip('$').replace(',','')))
+        
+    except:
+        
+        amt.append(a)
+
+amt = pd.Series(amt, name = 'Price')
+df = pd.concat([df, amt], axis = 1)
+df = df.dropna(axis = 0).reset_index(drop = True)
 
 # Write the dataframe to csv
 
