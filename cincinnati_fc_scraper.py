@@ -31,7 +31,7 @@ foreclosure = []
 
 for i in range(len(df)):
     
-    print('Scraping additional attributes for house ' + str(1+i) + ' of 163377.......') # Visualize progess
+    print('Scraping additional attributes for house ' + str(1+i) + ' of 163375.......') # Visualize progess
     
     try:
         
