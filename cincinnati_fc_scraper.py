@@ -31,7 +31,7 @@ foreclosure = []
 
 for i in range(len(df)):
     
-    print('Scraping additional attributes for house ' + str(1+i) + ' of 174813.......') # Visualize progess
+    print('Scraping additional attributes for house ' + str(1+i) + ' of 163377.......') # Visualize progess
     
     try:
         
@@ -88,7 +88,11 @@ for i in range(len(df)):
             
     except:
         
-        continue
+        districts.append(None)
+        deed_type.append(None)
+        acreage.append(None)
+        owner_live.append(None)
+        foreclosure.append(None)
     
 # Merging this to the main dataframe
 
