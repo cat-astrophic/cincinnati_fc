@@ -122,7 +122,7 @@ df = pd.concat([df,pd.Series(addresses, name = 'Addresses')], axis = 1)
 # Storing the addresses of the two stadiums
 
 nippert = 'Nippert Stadium, Cincinnati, OH 45221'
-mercy = '689 US-50, Milford, OH 45150'
+tql = '1501 Central Pkwy, Cincinnati, OH 45214'
 
 # Initializing a geolocator via Nominatim
 
@@ -131,7 +131,7 @@ geolocator = Nominatim(user_agent = 'geoapiExercises')
 # Getting latitude and longitude coordinates for the stadia
 
 nippert_coords = (geolocator.geocode(nippert).latitude,geolocator.geocode(nippert).longitude)
-mercy_coords = (geolocator.geocode(mercy).latitude,geolocator.geocode(mercy).longitude)
+tql_coords = (geolocator.geocode(tql).latitude,geolocator.geocode(tql).longitude)
 
 # Getting latitude and longitude coordinates for each address
 
@@ -153,7 +153,7 @@ for a in range(len(df)):
 # Initializing lists for storing distance data
 
 nippert_distance = []
-mercy_distance = []
+tql_distance = []
 
 # Calculating geodesic distances
 
@@ -161,15 +161,15 @@ for c in coords:
     
     print('Calculating distances for address ' + str(1+coords.index(c)) + ' of 174813.......') # Visualize progess    
     nippert_distance.append(geodesic(c,nippert_coords).km) # Distance in km
-    mercy_distance.append(geodesic(c,mercy_coords).km) # Distance in km
+    tql_distance.append(geodesic(c,tql_coords).km) # Distance in km
 
 # Adding the distance variables to the dataframe
 
 nippert_distance = pd.Series(nippert_distance, name = 'Nippert')
-mercy_distance = pd.Series(mercy_distance, name = 'Mercy')
+tql_distance = pd.Series(tql_distance, name = 'TQL')
 coordsx = pd.Series(coords, name = 'Coordinates')
 
-df = pd.concat([df, nippert_distance, mercy_distance, coordsx], axis = 1)
+df = pd.concat([df, nippert_distance, tql_distance, coordsx], axis = 1)
 
 # Calculating the age of the house at the time of the transaction (in years)
 
